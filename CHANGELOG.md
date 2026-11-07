@@ -13,6 +13,11 @@ a fresh copy, over the limit in the real run).
 - **Installer updates an installed plugin:** `plugin install` left rc2 in
   place; the installer now runs `plugin update` too and prints the
   version that is active.
+- **Copilot loads the installed version folder, not the marketplace
+  copy.** With VS Code open, its watch on the marketplace folder made
+  `marketplace update` fail (EPERM on rename). The server moves Copilot to
+  each new version at start; the installer frees an rc3 entry before it
+  updates and retries while VS Code lets go.
 
 ## 1.1.0rc3 (2026-11-07), installer, Copilot, no Altium registration
 

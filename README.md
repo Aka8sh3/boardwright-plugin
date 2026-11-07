@@ -104,7 +104,7 @@ and names each fix.
 | `version_match: false` with `stale_units` | Close the *Altium_API* script project in Altium and start the bridge again |
 | Doctor warns that `altium` is also registered, or about old skill links | An older eda-agent set-up is still configured (only one server may drive Altium): run the installer again, or `"<python>" -I -m boardwright setup --clean-old` |
 | Copilot does not show `/boardwright` | Check that **Chat › Plugins: Enabled** is on in VS Code settings and that **Chat: Plugin Locations** lists the Boardwright folder; run the installer again |
-| Updating says a file is in use | VS Code's Copilot is running Boardwright from that folder: close VS Code, then update |
+| Updating says a folder is in use | Run the installer again (it frees the folder); if it still fails, close VS Code and run it again |
 
 ## Before using it on company designs
 

@@ -98,10 +98,19 @@ $DataHome = if ($env:BOARDWRIGHT_HOME) { $env:BOARDWRIGHT_HOME } else { Join-Pat
 $Desktop = [Environment]::GetFolderPath('Desktop')
 
 function Find-Runtime {
-    # Claude Code's marketplace copy (a stable path), else the installed
-    # plugin in its cache (a local-folder marketplace has no copy).
-    $stable = Join-Path $PluginDir 'runtime\python.exe'
-    if (Test-Path $stable) { return $stable }
+    # The version Claude Code has installed (installed_plugins.json), so
+    # setup registers that folder for Copilot. Never the marketplace copy:
+    # VS Code watching it blocks Claude Code's marketplace updates.
+    $record = Join-Path $ClaudeDir 'plugins\installed_plugins.json'
+    if (Test-Path $record) {
+        $entries = (Get-Content $record -Raw | ConvertFrom-Json).plugins.$PluginId
+        foreach ($e in @($entries)) {
+            if ($e -and $e.installPath) {
+                $py = Join-Path $e.installPath 'runtime\python.exe'
+                if (Test-Path $py) { return $py }
+            }
+        }
+    }
     return Get-ChildItem (Join-Path $ClaudeDir 'plugins\cache\boardwright\boardwright') -Directory -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending |
         ForEach-Object { Join-Path $_.FullName 'runtime\python.exe' } |
@@ -176,8 +185,32 @@ $Copilot = $HasVsCode -and -not $NoCopilot
 Step 'Installing the Boardwright plugin for Claude Code'
 Write-Host '  (Git may open a browser window once to sign in to GitHub.)'
 if (Test-Path (Join-Path $PluginDir '.claude-plugin\marketplace.json')) {
-    $r = Invoke-Claude @('plugin', 'marketplace', 'update', 'boardwright')
-    if ($r.Code -ne 0) { Stop-Install "updating the Boardwright marketplace failed:`n$($r.Text)" }
+    # rc3 pointed Copilot at the marketplace copy; VS Code then watches it
+    # and Claude Code cannot replace it. Drop that entry first (setup below
+    # registers the installed version instead).
+    $old = Find-Runtime
+    $settings = Join-Path $env:APPDATA 'Code\User\settings.json'
+    if ($old -and (Test-Path $settings)) {
+        # Single quotes only: Windows PowerShell drops double quotes inside
+        # arguments it passes to a program.
+        $fix = 'import json,os,shutil,sys;p=sys.argv[1];m=os.path.normcase(sys.argv[2])' +
+               ';s=json.load(open(p,encoding=''utf-8-sig''));l=s.get(''chat.pluginLocations'') or {}' +
+               ';k=[x for x in l if os.path.normcase(os.path.normpath(x))==m]' +
+               ';k and (shutil.copy2(p,p+''.bak''),[l.pop(x) for x in k],open(p,''w'',encoding=''utf-8'').write(json.dumps(s,indent=4)+chr(10)))' +
+               ';print(''released'' if k else '''')'
+        $released = & $old -I -c $fix $settings ([IO.Path]::GetFullPath($PluginDir)) 2>$null
+        if ($released -eq 'released') { Ok 'Copilot let go of the marketplace folder'; Start-Sleep -Seconds 3 }
+    }
+    $r = $null
+    foreach ($try in 1..3) {
+        $r = Invoke-Claude @('plugin', 'marketplace', 'update', 'boardwright')
+        if ($r.Code -eq 0 -or $r.Text -notmatch 'in use|EPERM|EBUSY') { break }
+        Start-Sleep -Seconds 5
+    }
+    if ($r.Code -ne 0) {
+        Stop-Install ("updating the Boardwright marketplace failed. If it says the folder is in use, " +
+                      "close VS Code and run this again.`n$($r.Text)")
+    }
     Ok 'marketplace updated'
 } else {
     $r = Invoke-Claude @('plugin', 'marketplace', 'add', $Repo)
