@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.1.0rc4 (2026-11-08), first start within Claude Code's limit
+
+From the first headless live run of rc3: the plugin's server did not
+connect, because Claude Code gives an MCP server 30 s to start and a
+fresh plugin copy compiled ~1000 Python modules first (29.1 s measured on
+a fresh copy, over the limit in the real run).
+
+- **The plugin ships compiled bytecode** (`compileall --invalidation-mode
+  unchecked-hash`, valid after a git clone resets file dates): first
+  start 11.8 s, later starts 2.6 s. +44 MB.
+- **Installer updates an installed plugin:** `plugin install` left rc2 in
+  place; the installer now runs `plugin update` too and prints the
+  version that is active.
+
 ## 1.1.0rc3 (2026-11-07), installer, Copilot, no Altium registration
 
 From the first live test of rc2 on AD23 (plugin installed from GitHub,

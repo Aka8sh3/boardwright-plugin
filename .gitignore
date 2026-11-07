@@ -1,2 +1,3 @@
-__pycache__/
-*.pyc
+# The runtime's __pycache__ is shipped on purpose (unchecked-hash .pyc from
+# tools\build_plugin.ps1): it keeps the first server start under Claude
+# Code's 30 s MCP start limit.

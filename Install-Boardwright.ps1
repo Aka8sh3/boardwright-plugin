@@ -189,7 +189,14 @@ if (Test-Path (Join-Path $PluginDir '.claude-plugin\marketplace.json')) {
 }
 $r = Invoke-Claude @('plugin', 'install', $PluginId)
 if ($r.Code -ne 0) { Stop-Install "installing the plugin failed:`n$($r.Text)" }
-Ok 'plugin installed and enabled'
+# 'install' leaves an installed plugin at its old version; 'update' moves
+# it to the marketplace's (measured 2026-11-08: rc2 stayed after install).
+$r = Invoke-Claude @('plugin', 'update', $PluginId)
+if ($r.Code -ne 0) { Warn "updating the plugin reported: $($r.Text)" }
+$listed = (Invoke-Claude @('plugin', 'list')).Text -split "`n"
+$at = [array]::FindIndex($listed, [Predicate[string]]{ param($l) $l -match [regex]::Escape($PluginId) })
+$version = if ($at -ge 0) { ($listed[$at..($at + 3)] | Select-String 'Version:\s*(\S+)' | Select-Object -First 1).Matches.Groups[1].Value }
+Ok "plugin installed and enabled (version $version)"
 $Python = Find-Runtime
 if (-not $Python) { Stop-Install "the installed plugin has no runtime (looked in $PluginDir and the plugin cache)" }
 
