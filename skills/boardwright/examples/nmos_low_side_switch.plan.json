@@ -1,0 +1,45 @@
+{
+  "spec": "NMOS low-side switch: a 3.3 V logic input switches a 1 k load from a 12 V rail. Gate series resistor and gate pull-down. Two-pin terminals for supply and control.",
+  "summary": "Q1 2N7002 (SOT-23) switches load R3 to GND. R1 100R limits gate current, R2 10k holds the gate low when CTRL floats. J1 brings in V12/GND, J2 brings in CTRL/GND.",
+  "sheets": [{"name": "main", "title": "NMOS low-side switch", "size": "A4"}],
+  "zones": [
+    {"name": "connectors", "sheet": "main", "role": "io"},
+    {"name": "drive", "sheet": "main", "role": "gate_drive"}
+  ],
+  "parts": [
+    {"refdes": "J1", "lib_ref": "CONN_2", "lib_path": "C:\\Altium\\nmos_switch\\nmos_switch_lib.SchLib",
+     "value": "V12 IN", "footprint": "TB_2P_2.54", "manufacturer": "Phoenix Contact", "mpn": "1725656",
+     "sheet": "main", "zone": "connectors", "status": "existing", "rationale": "2-pin 2.54 mm terminal block for supply"},
+    {"refdes": "J2", "lib_ref": "CONN_2", "lib_path": "C:\\Altium\\nmos_switch\\nmos_switch_lib.SchLib",
+     "value": "CTRL IN", "footprint": "TB_2P_2.54", "manufacturer": "Phoenix Contact", "mpn": "1725656",
+     "sheet": "main", "zone": "connectors", "status": "existing", "rationale": "2-pin 2.54 mm terminal block for control"},
+    {"refdes": "R1", "lib_ref": "RES_GEN", "lib_path": "C:\\Altium\\nmos_switch\\nmos_switch_lib.SchLib",
+     "value": "100R", "footprint": "R0603", "manufacturer": "Yageo", "mpn": "RC0603FR-07100RL",
+     "sheet": "main", "zone": "drive", "status": "existing", "rationale": "gate series resistor"},
+    {"refdes": "R2", "lib_ref": "RES_GEN", "lib_path": "C:\\Altium\\nmos_switch\\nmos_switch_lib.SchLib",
+     "value": "10k", "footprint": "R0603", "manufacturer": "Yageo", "mpn": "RC0603FR-0710KL",
+     "sheet": "main", "zone": "drive", "status": "existing", "rationale": "gate pull-down"},
+    {"refdes": "R3", "lib_ref": "RES_GEN", "lib_path": "C:\\Altium\\nmos_switch\\nmos_switch_lib.SchLib",
+     "value": "1k", "footprint": "R0603", "manufacturer": "Yageo", "mpn": "RC0603FR-071KL",
+     "sheet": "main", "zone": "drive", "status": "existing", "rationale": "load (12 mA at 12 V)"},
+    {"refdes": "Q1", "lib_ref": "NMOS_SOT23", "lib_path": "C:\\Altium\\nmos_switch\\nmos_switch_lib.SchLib",
+     "value": "2N7002", "footprint": "SOT-23-3", "manufacturer": "Nexperia", "mpn": "2N7002",
+     "datasheet_url": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+     "sheet": "main", "zone": "drive", "status": "existing", "role": "switch",
+     "rationale": "60 V logic-level N-MOSFET, SOT-23 pinout 1=G 2=S 3=D per datasheet"}
+  ],
+  "nets": [
+    {"name": "V12", "is_power": true, "pins": [{"refdes": "J1", "pin": "1"}, {"refdes": "R3", "pin": "1"}]},
+    {"name": "GND", "is_ground": true, "pins": [
+      {"refdes": "J1", "pin": "2"}, {"refdes": "J2", "pin": "2"},
+      {"refdes": "R2", "pin": "2"}, {"refdes": "Q1", "pin": "2"}]},
+    {"name": "CTRL", "role": "control", "pins": [{"refdes": "J2", "pin": "1"}, {"refdes": "R1", "pin": "1"}]},
+    {"name": "GATE", "role": "control", "pins": [
+      {"refdes": "R1", "pin": "2"}, {"refdes": "R2", "pin": "1"}, {"refdes": "Q1", "pin": "1"}]},
+    {"name": "DRAIN", "role": "switch", "pins": [{"refdes": "R3", "pin": "2"}, {"refdes": "Q1", "pin": "3"}]}
+  ],
+  "open_questions": [
+    "Load is modelled as R3 1k; replace with the real load connector if the load is off-board.",
+    "Library paths assume the project lives in C:\\Altium\\nmos_switch; change lib_path to the real project-local SchLib."
+  ]
+}

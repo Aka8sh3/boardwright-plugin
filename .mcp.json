@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "boardwright": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/runtime/python.exe",
+      "args": ["-I", "-m", "boardwright", "serve"]
+    }
+  }
+}

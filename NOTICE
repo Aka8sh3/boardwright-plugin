@@ -1,0 +1,25 @@
+Boardwright
+Copyright 2026 The Boardwright authors
+
+Boardwright is licensed under the Apache License, Version 2.0 (LICENSE).
+
+------------------------------------------------------------------------
+Third-party software
+------------------------------------------------------------------------
+
+The Boardwright engine (engine/, and eda_agent inside runtime/) is a
+modified version of eda-agent, used under the Apache License 2.0:
+
+  eda-agent
+  Copyright 2026 George Saliba <george.saliba@salitronic.com>
+
+  This product includes software developed by George Saliba
+  (https://github.com/salitronic/eda-agent).
+
+  Full licence and notice: LICENSES/eda-agent/
+  Modifications: the Boardwright patch series on the "boardwright" branch
+  of the engine repository, listed in docs/ENGINE.md.
+
+The bundled runtime contains CPython (Python Software Foundation License,
+runtime/LICENSE.txt) and Python packages whose licences ship with them in
+runtime/Lib/site-packages/*.dist-info/.

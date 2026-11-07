@@ -1,0 +1,8 @@
+{
+  "name": "boardwright",
+  "version": "1.1.0-rc2",
+  "description": "AI design assistant for Altium Designer: from a picture or idea to an ERC-clean schematic with datasheet-checked parts, then to a routed, DRC-clean PCB and fab package. Brings its own runtime; needs only Altium Designer.",
+  "author": { "name": "The Boardwright authors" },
+  "keywords": ["altium", "schematic", "pcb", "layout", "erc", "drc", "eda", "mcp"],
+  "license": "Apache-2.0"
+}
