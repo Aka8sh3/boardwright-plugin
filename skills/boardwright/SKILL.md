@@ -50,8 +50,9 @@ the mode ("just show me what it looks like") gets one question.
   `action`, `how` or `kind` argument, for example
   `app_checkpoints(action="make", args={...})` and
   `pcb_calc(kind="trace_width_for_current", args={...})`.
-- **Minimal toolset** (GitHub Copilot): only Boardwright's own tools plus
-  `tool_catalog` and `tool_invoke` appear. Run every other tool as
+- **Short tool list** (GitHub Copilot and other clients): only
+  Boardwright's own tools plus `tool_guide`, `tool_catalog` and
+  `tool_invoke` appear. Run every other tool as
   `tool_invoke(name="<tool>", arguments={...})`, and fetch its argument
   names first with `tool_catalog(query="<tool>", with_schema=true)`.
   Never guess argument names. See
@@ -95,11 +96,13 @@ Each comes from a real incident:
    - Altium is not running: ask the user to open Altium Designer. You
      cannot start it.
    - Altium is open but the bridge does not answer: ask the user, then
-     `boardwright_start_bridge`. A script error in Altium means the
-     one-time registration of the script project was never done: give
-     the user the `script_project` path and the Global Projects steps.
-   - `version_match` is false: Altium still runs older scripts; the user
-     reopens the script project (first-run.md §3).
+     `boardwright_start_bridge`. Nothing needs registering in Altium
+     (never send the user to Global Projects).
+   - A warning to close another `Altium_API.PrjScr`: the bridge works; ask
+     the user to close that old copy in the Projects panel and go on.
+   - `version_match` is false with `stale_units`: Altium still runs older
+     scripts; the user closes and reopens the script project
+     (first-run.md §2).
    - Anything else: `boardwright_doctor`.
 
    Ping again after each fix. In demo mode a failed preflight stops the

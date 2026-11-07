@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.1.0rc3 (2026-11-07), installer, Copilot, no Altium registration
+
+From the first live test of rc2 on AD23 (plugin installed from GitHub,
+bridge up, doctor live checks passing):
+
+- **Nothing to register in Altium.** The bridge is started by the script
+  project's full path, which AD23 accepted without a Global Projects
+  entry (that preferences page is not in current Altium versions). The
+  doctor reports the engine's "script registration" check as not needed;
+  README and skill no longer send anyone to Global Projects.
+- **`Install-Boardwright.ps1`:** one PowerShell run checks Altium, Git and
+  Claude Code (offers to install the last two), installs the plugin,
+  registers it for GitHub Copilot, removes an older eda-agent set-up
+  (saved to `old-setup-removed.json`), prepares the PC, adds a desktop
+  shortcut "Start Boardwright in Altium", optionally starts the bridge
+  and runs the doctor. `-Uninstall` undoes it (data stays).
+- **GitHub Copilot in VS Code** loads the same plugin folder
+  (`boardwright setup --copilot` sets `chat.pluginLocations`; it replaces
+  rc2's separate mcp.json server). The server shows Copilot and other
+  clients a short tool list (`boardwright_*`, `tool_guide`, `tool_catalog`,
+  `tool_invoke`) and Claude Code the full one.
+- **Bridge launcher** `%USERPROFILE%\Boardwright\Start Boardwright in
+  Altium.cmd`, rewritten by the server whenever the runtime moves.
+- `boardwright setup --clean-old` removes an old `altium` server (Claude
+  Code and VS Code), the old `altium-schematic` / `altium-pcb-layout`
+  skill links and the old plugin.
+- **Engine (app_ping):** with two `Altium_API.PrjScr` copies open, the
+  check compared the running bridge with the first one listed and called
+  a current bridge stale. It now compares with the copy whose stamps the
+  running units carry (`bridge_runs_from`) and names the copy to close.
+- `boardwright remove --data` refuses a folder that holds a source
+  checkout.
+
 ## 1.1.0rc2 (2026-11-07), Claude Code plugin, not yet live-tested
 
 - **One plugin, one skill.** Boardwright installs from a Claude Code

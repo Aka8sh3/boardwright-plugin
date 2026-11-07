@@ -1,11 +1,13 @@
 # Calling Boardwright tools in either toolset
 
 The `boardwright` MCP server registers about 570 tools (tool families
-are folded behind one tool with an `action`, `how` or `kind` argument). A client either
-sees all of them or, in minimal mode (GitHub Copilot in VS Code, set by
-`boardwright setup --copilot` through `EDA_AGENT_TOOLSET=minimal`), only
-Boardwright's own tools (`boardwright_info`, `boardwright_start_bridge`,
-`boardwright_doctor`) plus two meta-tools.
+are folded behind one tool with an `action`, `how` or `kind` argument).
+Claude Code is shown all of them. Every other client (GitHub Copilot in
+VS Code caps a request at 128 tools) is shown a short list: Boardwright's
+own tools (`boardwright_info`, `boardwright_start_bridge`,
+`boardwright_doctor`), `tool_guide` and the two meta-tools `tool_catalog`
+and `tool_invoke`, which reach all the others. Below, "minimal" means that
+short list.
 
 In Claude Code the plugin's tools carry a prefix, for example
 `mcp__plugin_boardwright_boardwright__app_ping`. This skill writes the bare
@@ -14,10 +16,10 @@ name (`app_ping`); call the tool that ends in it.
 | You see... | Mode | How to call `proj_compile` |
 |---|---|---|
 | `app_ping`, `proj_compile`, `sch_draw_template`, ... | full | `proj_compile(project_path="C:\\...\\x.PrjPcb")` |
-| only `tool_catalog` + `tool_invoke` | minimal | `tool_invoke(name="proj_compile", arguments={"project_path": "C:\\...\\x.PrjPcb"})` |
+| `boardwright_*`, `tool_guide`, `tool_catalog`, `tool_invoke` only | minimal | `tool_invoke(name="proj_compile", arguments={"project_path": "C:\\...\\x.PrjPcb"})` |
 
-Copilot in VS Code limits how many tools one request can carry, so it runs
-in minimal mode. Claude Code (CLI and VS Code extension) runs in full mode.
+The server picks the list from the client's name when it connects;
+Claude Code (CLI and VS Code extension) gets the full list.
 
 ## Minimal-mode routine
 

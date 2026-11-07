@@ -6,37 +6,54 @@ Altium: real parts checked against their datasheets, an ERC-clean
 schematic, then a routed, DRC-clean board and the fab package. It stops
 for your approval at each important step.
 
-It is a **Claude Code plugin** (CLI or the VS Code extension). It brings
-its own Python and engine, so the PC needs only Altium Designer.
+It is a **Claude Code plugin** (CLI or the VS Code extension), and GitHub
+Copilot Chat in VS Code can use the same plugin. It brings its own Python
+and engine, so the PC needs only Altium Designer. Nothing has to be
+registered inside Altium.
 
 ## Install (once per PC)
 
 You need: Windows 10/11, **Altium Designer** (licensed), **Claude Code**
-(CLI or VS Code extension), and read access to this repository.
+(the VS Code extension or the CLI), and read access to this repository
+(ask for it).
 
-1. In Claude Code, add the marketplace and install the plugin:
-   ```
-   /plugin marketplace add https://github.com/Aka8sh3/boardwright-plugin.git
-   /plugin install boardwright@boardwright
-   ```
-   Use the full https address: the short `Aka8sh3/boardwright-plugin`
-   form clones over SSH, which needs a GitHub SSH key. Git asks for your
-   GitHub login the first time.
-   Restart Claude Code (or reload the VS Code window). The first start
-   prepares `%USERPROFILE%\Boardwright\` and the Altium scripts by itself.
-2. In **Altium Designer**, once: **Preferences → Scripting System → Global
-   Projects → Install from file** →
-   `%USERPROFILE%\Boardwright\altium-scripts\Altium_API.PrjScr`.
+**With the installer (recommended).** Save `Install-Boardwright.ps1` from
+this repository, then in PowerShell:
+```powershell
+powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Downloads\Install-Boardwright.ps1"
+```
+It checks Altium, Git and Claude Code, installs the plugin, makes GitHub
+Copilot Chat in VS Code load it too, removes an older eda-agent set-up
+(listed in `%USERPROFILE%\Boardwright\old-setup-removed.json`), prepares
+the Altium scripts and puts a **Start Boardwright in Altium** shortcut on
+the desktop. Git may open a browser once to sign you in to GitHub.
+Options: `-NoCopilot`, `-KeepOld`, `-NoShortcut`, `-Yes`, `-Uninstall`.
+Restart VS Code afterwards.
 
-That's all. Each session, Boardwright starts its bridge in the open Altium
-for you (it asks first). By hand it is **File → Run Script… → Altium_API
-→ Dispatcher.pas → StartMCPServer**.
+**By hand, in Claude Code:**
+```
+/plugin marketplace add https://github.com/Aka8sh3/boardwright-plugin.git
+/plugin install boardwright@boardwright
+```
+Use the full https address: the short `Aka8sh3/boardwright-plugin` form
+clones over SSH, which needs a GitHub SSH key. Restart Claude Code; the
+first start prepares `%USERPROFILE%\Boardwright\` and the Altium scripts.
+
+## Starting the bridge in Altium
+
+Open Altium Designer, then either let Boardwright start the bridge (it
+asks first), or double-click **Start Boardwright in Altium** on the
+desktop. The **Boardwright - Altium bridge** window appears in Altium.
+Without the shortcut: **File → Open…** →
+`%USERPROFILE%\Boardwright\altium-scripts\Altium_API.PrjScr`, then **File
+→ Run Script… → Altium_API → Dispatcher.pas → StartMCPServer**.
 
 ## Use
 
 One skill does the whole flow and picks the part it needs. Claude Code
-lists it as `/boardwright:boardwright` (type `/boardwright` and pick it);
-the examples below write it short:
+lists it as `/boardwright:boardwright` (type `/boardwright` and pick it).
+In GitHub Copilot Chat use Agent mode and type `/boardwright`. The
+examples below write it short:
 
 - Attach a circuit picture and type `/boardwright build this`. Boardwright
   names the topology, asks the key questions with defaults, runs
@@ -68,28 +85,32 @@ stock and price, set user environment variables and restart Claude Code:
 
 ## Update and uninstall
 
-- **Update:** `/plugin marketplace update boardwright`, then restart
-  Claude Code. The new Altium scripts are deployed on the next start;
-  close and reopen the script project in Altium so it recompiles.
-- **Uninstall:** `/plugin uninstall boardwright@boardwright`, then remove
-  *Altium_API* from Altium's Global Projects.
+- **Update:** run the installer again, or `/plugin marketplace update
+  boardwright` in Claude Code; then restart VS Code. The new Altium
+  scripts are deployed on the next start: in Altium, close the
+  *Altium_API* script project (Projects panel → right-click → Close
+  Project) and start the bridge again so Altium recompiles it.
+- **Uninstall:** run the installer with `-Uninstall`, or
+  `/plugin uninstall boardwright@boardwright`. Your data folder stays.
 
 ## Troubleshooting
 
-Ask Claude to run **`boardwright_doctor`**: it checks the whole set-up
+Ask the AI to run **`boardwright_doctor`**: it checks the whole set-up
 and names each fix.
 
 | Symptom | Fix |
 |---|---|
-| Altium shows a script error when the bridge starts | Do install step 2 (Global Projects) |
-| `version_match: false` | Close and reopen the *Altium_API* script project in Altium |
-| Doctor warns that `altium` is also registered | An older eda-agent setup is still configured: `claude mcp remove altium -s user`. Only one server may drive Altium |
-| Doctor warns about old skill links or a second `boardwright` server | Boardwright 1.0 was installed with `Install.cmd`: run its `Uninstall.cmd`, or `<python> -I -m boardwright remove` |
+| "Close the other Altium_API.PrjScr …" | An older copy of the script project is open too. Projects panel → right-click it → **Close Project** |
+| `version_match: false` with `stale_units` | Close the *Altium_API* script project in Altium and start the bridge again |
+| Doctor warns that `altium` is also registered, or about old skill links | An older eda-agent set-up is still configured (only one server may drive Altium): run the installer again, or `"<python>" -I -m boardwright setup --clean-old` |
+| Copilot does not show `/boardwright` | Check that **Chat › Plugins: Enabled** is on in VS Code settings and that **Chat: Plugin Locations** lists the Boardwright folder; run the installer again |
+| Updating says a file is in use | VS Code's Copilot is running Boardwright from that folder: close VS Code, then update |
 
 ## Before using it on company designs
 
 Boardwright sends the design content you work on (schematics, part lists,
-your prompts) to the AI service behind Claude Code. Use it on company
+your prompts) to the AI service behind Claude Code, or behind GitHub
+Copilot when you use it there. Use it on company
 designs only where your company's AI and data policy allows that service.
 Altium itself and your files stay on your PC.
 
