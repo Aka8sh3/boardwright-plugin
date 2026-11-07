@@ -31,8 +31,9 @@ for you (it asks first). By hand it is **File → Run Script… → Altium_API
 
 ## Use
 
-One skill, `/boardwright`, does the whole flow and picks the part it
-needs:
+One skill does the whole flow and picks the part it needs. Claude Code
+lists it as `/boardwright:boardwright` (type `/boardwright` and pick it);
+the examples below write it short:
 
 - Attach a circuit picture and type `/boardwright build this`. Boardwright
   names the topology, asks the key questions with defaults, runs
