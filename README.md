@@ -16,9 +16,12 @@ You need: Windows 10/11, **Altium Designer** (licensed), **Claude Code**
 
 1. In Claude Code, add the marketplace and install the plugin:
    ```
-   /plugin marketplace add Aka8sh3/boardwright-plugin
+   /plugin marketplace add https://github.com/Aka8sh3/boardwright-plugin.git
    /plugin install boardwright@boardwright
    ```
+   Use the full https address: the short `Aka8sh3/boardwright-plugin`
+   form clones over SSH, which needs a GitHub SSH key. Git asks for your
+   GitHub login the first time.
    Restart Claude Code (or reload the VS Code window). The first start
    prepares `%USERPROFILE%\Boardwright\` and the Altium scripts by itself.
 2. In **Altium Designer**, once: **Preferences → Scripting System → Global
