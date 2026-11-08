@@ -77,6 +77,13 @@ Each comes from a real incident:
    takes one, and `pcb_focus_board(board_path)` before board edits.
 3. **No unattended modals.** Tools that open a dialog block the bridge
    until a human clicks. Use the headless routes the part files give.
+   When a call reports a dialog on screen: `app_list_open_dialogs`. If its
+   text is unreadable, `app_send_keys("ctrl+c")` while it is focused, then
+   `app_get_clipboard` (both work while the bridge is blocked). Press a
+   button only when you know what the dialog asks AND it concerns only the
+   target project. A dialog you still cannot read gets no button, in demo
+   mode too: stop and ask the user to read it (demo mode: stop the run and
+   report it).
 4. **Checkpoint before risky stages:**
    `app_checkpoints(action="make", args={"label": "..."})`.
 5. **Judge from data, not pictures.** Netlists, audits and DRC/ERC

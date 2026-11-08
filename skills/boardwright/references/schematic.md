@@ -165,7 +165,16 @@ every real part in the rating table, in this order:
    one card. **Hand each MPN to a sub-agent** (the Agent tool) that reads
    the PDF and returns only the card, so the pages never enter this
    conversation. Never read a PDF without `pages`; the budget is 5 pages
-   per MPN. Give generic passives a short card from the series datasheet.
+   per MPN.
+   **Chip resistors and MLCCs are a series, not a part:** one short card
+   per series and size (for example Yageo RC0603, Yageo CC0603 X7R)
+   covers every value. Build the MPN from the series' ordering code, and
+   store the card in the verified store as `series-<series>.md`, so the
+   next design needs no web call at all. Spend at most two web calls per
+   series. If the maker's site fails twice, take the series PDF from a
+   distributor (LCSC, Mouser) or use a different maker's equivalent
+   series; do not hunt for one value's spec sheet. (Live run 2026-11-08:
+   one 100 Ω resistor and one 100 nF capacitor took 15 web calls.)
    `datasheet_fetch` the manufacturer PDF, read it, and write a
    **datasheet card** per part: ratings, key parameters, recommended use,
    pins, package and lifecycle, each with its page number, plus

@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.1.0rc5 (2026-11-08), fixes from the first live design run
+
+The first full `/boardwright` run on AD23 (NMOS low-side switch, demo
+mode) reached ERC 0 and a netlist matching the plan pin for pin, and took
+15.4 min, $11.30 and 194 tool calls. What it ran into:
+
+- **Engine** (`boardwright-engine` 85d2e78):
+  - `force_recompile` saved every open document (8 other projects were
+    open) and raised a Yes/No Warning that blocked the bridge; it now
+    saves only the target project.
+  - Tools that build on "the current component" (`lib_create_passive_symbol`,
+    `lib_copy_footprint`, the footprint creators) run their `items` in
+    order; gathered, all pins landed on one symbol and copies wrote nothing.
+  - `design_audit_schematic` no longer audits the project's `.SchLib` as a
+    sheet (false overlaps).
+  - Diode symbols name their pins A and K and take `pin_map`
+    (`{"K":"1","A":"2"}` for cathode-1 rectifiers).
+  - `app_get_clipboard` reads through Windows, so a blocking dialog's text
+    (Ctrl+C) can be read.
+- **Runtime:** matplotlib and Pillow are bundled (the engine's `render`
+  extra): the schematic preview PNG and `app_screenshot` work. 309 MB.
+- **Skill:**
+  - A dialog it cannot read gets no button press, in demo mode too: read
+    it via Ctrl+C + `app_get_clipboard`, otherwise stop and ask.
+  - Chip resistors and MLCCs get one card per series (`series-*.md` in the
+    verified store), at most two web calls per series; the run spent 15 on
+    one resistor and one capacitor.
+  - `footprint_check_package` takes `pins` (the reference said
+    `pin_count`); diode `pin_map` documented.
+
 ## 1.1.0rc4 (2026-11-08), first start within Claude Code's limit
 
 From the first headless live run of rc3: the plugin's server did not

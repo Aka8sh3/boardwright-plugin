@@ -36,12 +36,20 @@ Discretes get the conventional glyph, in one call:
 ```
 lib_create_passive_symbol(name="RES_GEN", kind="resistor")
 lib_create_passive_symbol(name="NMOS_SOT23", kind="nmos", pin_map={"G":"1","S":"2","D":"3"})
+lib_create_passive_symbol(name="MBRA140T3G", kind="schottky", pin_map={"K":"1","A":"2"})
 ```
 
 Kinds: resistor, capacitor, polarized_capacitor, inductor, diode, led,
 crystal, fuse, zener, schottky, tvs, tvs_bidirectional, switch,
-push_button, nmos, pmos, npn, pnp. The default `pin_map` for a transistor
-is the common SOT-23 assignment, so **check it against the datasheet**.
+push_button, nmos, pmos, npn, pnp. `pin_map` sets the pin numbers from the
+datasheet, so **always check it**:
+- Transistors default to the common SOT-23 assignment (G/B = 1).
+- One-way diodes (diode, led, zener, tvs, schottky) have pins named A and
+  K, default A = 1. Many rectifiers (SMA/SMB, onsemi, Vishay) number the
+  cathode 1: pass `{"K":"1","A":"2"}`.
+
+Make one symbol per call: these tools build on "the current component", so
+give them no `items` list.
 
 ICs use a rectangle with the pins grouped by function, not in package
 order:
@@ -73,7 +81,7 @@ From the package drawing (preferred), check first and then create:
 footprint_check_package(package={ "family":"sot23", "pitch":0.95,
    "lead_span_x":[2.10,2.40,2.64], "body_y":[2.80,2.90,3.04],
    "lead_length":[0.30,0.40,0.50], "lead_width":[0.30,0.40,0.50],
-   "pin_count":3, "source":{"document":"<datasheet>","page":9,"url":"..."} })
+   "pins":3, "source":{"document":"<datasheet>","page":9,"url":"..."} })
 lib_create_footprint_from_package(package=<same>, name="SOT-23-3")
 ```
 

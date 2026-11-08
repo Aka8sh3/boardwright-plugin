@@ -14,6 +14,10 @@ symbol and its footprint. A later run copies them in for about 500 tokens.
 ├── verified.SchLib     the store's symbols (this skill's own library)
 ├── verified.PcbLib     the store's footprints
 └── cards\<MPN>.md      one datasheet card per MPN
+    cards\series-<series>.md   one card per chip-resistor / MLCC series and
+                               size (e.g. series-RC0603.md), valid for every
+                               value; its index row gives the series as MPN
+                               with "*" for the value (RC0603FR-07*L)
 ```
 
 This library belongs to the skill, so writing to it does not break the
