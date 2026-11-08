@@ -12,9 +12,23 @@ Two pieces, in this order:
    symbols' pins through the bridge, so Altium must be up);
    `sch_draw_template` draws it.
 
-There is no automatic schematic layout. The quality of the sheet is the
-quality of the template you write. The live schema and rules come from
-`design_get_discipline`.
+`boardwright_draft_schematic` writes the template from the plan (see the
+next paragraph); your job is to review and adjust it, not to write one
+from nothing. The live schema and rules come from `design_get_discipline`.
+
+**The drafter.** It reads each part as an engineer does before drawing:
+a net is ground, a rail (the plan's `is_power` / `is_ground`) or a
+signal; a two-pin part between two signals is in the path and lies
+across it, one between a signal and ground or a rail hangs off that
+line (a pull-down under it, a pull-up or clamp above it, a divider
+stacked on its node), a capacitor between a rail and ground decouples
+(by an IC, in a row above it with its own symbols). Connectors whose
+`role` or `value` says in/input/supply/ctrl go on the left edge,
+out/output/load on the right; any other connector (a debug header, a bus)
+goes where its pins lead. So give connectors a `role` such as
+`vin_conn`, `ctrl_conn`, `load_conn`. It then searches placements and
+routes each one; the engine's template checker scores every candidate,
+so a draft has no shorts and matches the plan pin by pin.
 
 ## The plan
 
@@ -110,8 +124,9 @@ leaves the block**; room beside each part for its value text.
 
 1. `design_validate_plan(plan_json)` costs nothing and needs no Altium. Fix
    every error.
-2. `lib_get_pin_list` for every symbol in the block, then write the
-   template.
+2. `boardwright_draft_schematic(plan_path=<Design Notes\schematic_plan.json>)`,
+   read its PNG, adjust the draft if needed and save it as
+   `Design Notes\schematic_template.json`.
 3. `sch_preview_template(template, plan_json=..., png_path="<proj dir>\\Design Notes\\schematic_preview.png")`.
    Fix **every** error (shorts, overlapping wires, bad anchors, netlist
    differences, a port touching nothing) and every warning (crossings, a

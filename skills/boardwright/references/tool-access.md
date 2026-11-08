@@ -5,7 +5,8 @@ are folded behind one tool with an `action`, `how` or `kind` argument).
 Claude Code is shown all of them. Every other client (GitHub Copilot in
 VS Code caps a request at 128 tools) is shown a short list: Boardwright's
 own tools (`boardwright_info`, `boardwright_start_bridge`,
-`boardwright_doctor`), `tool_guide` and the two meta-tools `tool_catalog`
+`boardwright_doctor`, `boardwright_draft_schematic`), `tool_guide` and the
+two meta-tools `tool_catalog`
 and `tool_invoke`, which reach all the others. Below, "minimal" means that
 short list.
 
@@ -50,6 +51,6 @@ tools that open a blocking dialog, and avoid them while running unattended.
 |---|---|
 | Preflight | `boardwright_info`, `app_ping`, `boardwright_start_bridge`, `boardwright_doctor`, `design_get_discipline`, `proj_list_open`, `proj_create`, `proj_open`, `app_checkpoints` |
 | Library | `lib_get_installed_libraries`, `design_snapshot_inventory`, `part_search`, `app_create_document`, `app_set_active_document`, `lib_create_passive_symbol`, `lib_create_ic_symbol`, `footprint_check_package`, `lib_create_footprint_from_package`, `lib_create_standard_footprint`, `lib_link_footprint`, `lib_get_pin_list`, `app_save_document` |
-| Plan | `design_list_circuit_blocks`, `design_compose_netlist`, `design_add_part`, `design_add_circuit_block`, `design_edit_plan`, `design_validate_plan`, `lib_get_pin_list`, `sch_preview_template` |
+| Plan | `design_list_circuit_blocks`, `design_compose_netlist`, `design_add_part`, `design_add_circuit_block`, `design_edit_plan`, `design_validate_plan`, `boardwright_draft_schematic`, `sch_preview_template` |
 | Draw | `sch_set_sheet_size`, `sch_draw_template`, `app_save_document`, `proj_save`, `design_audit_schematic` |
 | ERC | `proj_compile`, `proj_run_erc`, `proj_get_erc_violations`, `design_validate`, `proj_get_nets`, `proj_get_unconnected_pins`, `proj_get_connectivity_many`, `sch_place_no_erc` |

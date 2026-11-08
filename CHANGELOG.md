@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.1.0rc6 (2026-11-08), the schematic drafter
+
+- **`boardwright_draft_schematic`**: a DesignPlan in, a sheet drawn by the
+  conventions out, as a template for `sch_preview_template` /
+  `sch_draw_template` plus a picture. It reads the circuit the way an
+  engineer does (rails, ground, signals; series parts in the path, shunts
+  hung off the line they load, decoupling capacitors by their IC; input
+  connectors left, outputs right, other connectors by their pins), then
+  searches placements, routes each one with a schematic maze router (no
+  touching another net's pin or wire end, crossings only at right angles,
+  no four-way joins, power and ground symbols, net labels where a wire
+  would run long) and scores it with the engine's own template checker.
+  `src/boardwright/layout/`.
+- Measured on the first live run's NMOS switch, same plan and library:
+  the agent's hand-written template had 10.5 in of wire over 8.9 sq in;
+  the draft has 2.5 in over 3.0 sq in, no crossings and no warnings, and
+  the engine's `sch_preview_template` passes it against the plan pin by
+  pin with the pins read live from Altium.
+- In the short tool list Copilot sees.
+- **Engine** (`boardwright-engine` b83b346): the template checker no
+  longer reports every power port's name as overlapping its own symbol.
+- **Skill:** the schematic phase drafts first and reviews, instead of
+  writing a template from nothing; connectors get a `role`.
+
 ## 1.1.0rc5 (2026-11-08), fixes from the first live design run
 
 The first full `/boardwright` run on AD23 (NMOS low-side switch, demo

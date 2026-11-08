@@ -229,13 +229,19 @@ and a worked plan is in [../examples/nmos_low_side_switch.plan.json](../examples
    ERC error waiting to happen. Rails get `is_power` and ground gets
    `is_ground`. Set `lib_path` on parts from the project-local SchLib.
 3. `design_validate_plan(plan_json)` until `ok: true`.
-4. Read every symbol's pins with `lib_get_pin_list`, then write the
-   **template** block by block, every coordinate on the 100 mil grid,
-   drawn the way an engineer draws it (IC in the middle, rails straight,
-   capacitors hanging down to ground, labels only where a signal leaves
-   the block). Wires run through pin anchors such as `U1.EN`; you never
-   compute pin coordinates. Rules and an example: [design-plan.md](design-plan.md).
-5. `sch_preview_template(template, plan_json=..., png_path=...)` checks
+4. Save the plan to `Design Notes\schematic_plan.json`, then
+   `boardwright_draft_schematic(plan_path=...)`. It lays the sheet out by
+   the drawing conventions (signal left to right, inputs on the left edge,
+   shunts hung off their line, decoupling capacitors in a row by their IC,
+   no crossings where a route around exists, every net named) and writes
+   `Design Notes\schematic_draft.json` and a PNG. Read the PNG. Do not
+   write a template from scratch: if something reads badly, edit the
+   draft (move a part, turn it, reroute one wire through pin anchors such
+   as `U1.EN`) or draft again with another `seed`. Save the result as
+   `Design Notes\schematic_template.json`. `sheet_size_needed` in the
+   reply means the drawing does not fit the plan's sheet size: change the
+   size in the plan or split the sheet. Template rules: [design-plan.md](design-plan.md).
+5. `sch_preview_template(template_path=..., plan_json=..., png_path=...)` checks
    the template against the symbols and the plan's nets and renders a PNG
    without drawing anything. It reads the symbols' pins through the
    bridge, so Altium must be up (the preflight). Fix every error and warning first. **Show the

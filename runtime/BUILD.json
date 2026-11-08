@@ -1,8 +1,8 @@
 ﻿{
-    "boardwright":  "1.1.0rc5",
-    "boardwright_commit":  "8ffff2f",
+    "boardwright":  "1.1.0rc6",
+    "boardwright_commit":  "de73985",
     "engine":  "eda-agent 0.8.0 (Boardwright patch series)",
-    "engine_commit":  "1317885",
+    "engine_commit":  "b83b346",
     "python":  "3.12.10",
-    "built":  "2026-11-08 11:45"
+    "built":  "2026-11-08 15:10"
 }

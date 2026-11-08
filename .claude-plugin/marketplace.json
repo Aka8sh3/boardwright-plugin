@@ -7,7 +7,7 @@
       "name": "boardwright",
       "source": "./",
       "description": "Altium from idea to board: schematic with real parts and ERC 0, then PCB layout with DRC 0 and a fab package.",
-      "version": "1.1.0-rc5"
+      "version": "1.1.0-rc6"
     }
   ]
 }
