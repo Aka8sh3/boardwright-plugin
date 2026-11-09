@@ -34,9 +34,12 @@ run without stopping; the user is recording and will not answer:
   none is named) and the reference defaults. Show the board spec, the
   placement numbers and the final audit as status lines and go on.
 - Narrate each phase as `▶ Phase n/8: <name>`, then one line of numbers.
-- Never call a tool that opens a modal (`pcb_run_drc`, `proj_sync_pcb`,
-  ECO, menu or dialog tools). Verify with the measured audits only, and
-  say in the report that Altium's own DRC is still to be run by hand.
+- Never call a tool that opens a modal (`proj_sync_pcb`, ECO,
+  `pcb_run_drc(allow_modal=True)`, menu or dialog tools). Altium's own
+  DRC still runs: `pcb_run_drc()` is the batch check, no dialog. Run it
+  in phase 7 like any other mode; the measured audits do not check silk
+  spacing, and a demo board once passed them with two silk-to-silk
+  violations.
 - Generate outputs only through the headless path. If it needs a click,
   skip it and say so in the report.
 - If the request also contains `quick`, run the quick mode without stopping.
@@ -72,8 +75,9 @@ Board safety rules. Each comes from a real incident:
    `obj_count` when in doubt.
 2. **Save by path only:** `app_save_document(<PcbDoc>)` and `proj_save`.
    Never `app_save_all`.
-3. **No unattended modals.** `pcb_run_drc` and `proj_sync_pcb` (ECO) block
-   the bridge until a human clicks. Use the headless routes below, and
+3. **No unattended modals.** `proj_sync_pcb` (ECO) and
+   `pcb_run_drc(allow_modal=True)` block the bridge until a human clicks
+   (plain `pcb_run_drc()` is headless). Use the headless routes below, and
    use the modal ones only when the user is at the screen and has agreed.
 4. **Checkpoint before each high-risk stage** (netlist transfer, routing,
    pours): `app_checkpoints(action="make", args={"label": ...})`. The job tools checkpoint by

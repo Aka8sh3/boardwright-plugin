@@ -102,6 +102,10 @@ datasheet's formulas, rounded to E-series values.
 - With `plan_json` given, a part needs only `designator` and position:
   symbol, library and value come from the plan, and the plan's nets are
   checked pin by pin.
+- `"mirrored": true` on a part reflects it left to right after its
+  rotation, as Altium mirrors (single-part symbols). A connector on the
+  right edge faces into the sheet with pin 1 on top only mirrored; the
+  drafter sets it.
 - A path point is `[x, y]` or a **pin anchor** `"U1.11"` / `"U1.EN"`, the
   pin's wire end worked out from the symbol, so you never compute pin
   coordinates. A name shared by several pins (PGND, SW) needs the number.

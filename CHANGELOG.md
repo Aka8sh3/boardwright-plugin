@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.1.0rc7 (2026-11-09), from the first idea-to-Gerbers live run
+
+The first full `/boardwright demo` run (NMOS board: schematic with the
+drafter, ERC, 40 x 35 mm 2-layer board, Gerbers) took 11.1 min, $6.56 and
+132 tool calls, against 15.4 min, $11.30 and 194 calls for rc5's
+schematic alone. What it showed:
+
+- **Altium's DRC was skipped in demo mode.** The skill still listed
+  `pcb_run_drc` as a tool that opens a dialog; it has run headless since
+  engine 0.8. Run by hand, it found two silk-to-silk violations the
+  measured audits do not check. Demo mode now runs `pcb_run_drc()` like
+  every other mode (`references/layout.md`, `outputs.md`).
+- **Mirrored parts in templates** (`boardwright-engine` 97a1439): a template part
+  takes `"mirrored": true`, reflected left to right after the rotation as
+  Altium mirrors. `sch_preview_template` predicts the mirrored pins;
+  `sch_draw_template` mirrors the part after placing it and checks every
+  pin against the prediction before the first wire. The run's load
+  terminal on the right edge had looped its 12 V wire down and back up,
+  because at rotation 180 its rail pin is the lower one.
+- **The drafter mirrors connectors** where that gives the better pin
+  order: a rail's pin on top, ground's at the bottom, otherwise pin 1 on
+  top. The order is decided, not searched.
+- **The drafter knows each symbol's real outline.** It reads the symbol's
+  graphics through the bridge (one batched query per symbol) and scores
+  parts whose outlines meet, as `design_audit_schematic` does on the
+  drawn sheet: the run's D1 ran 20 mil into J3's box, which the pins
+  alone did not show. The outline model reproduces Altium's
+  BoundingRectangle on the run's parts exactly.
+- Live check on a scratch project: drafted with outlines read live, drawn
+  with J3 mirrored, pins read back as predicted, audit 0 overlaps, ERC
+  passed.
+
 ## 1.1.0rc6 (2026-11-08), the schematic drafter
 
 - **`boardwright_draft_schematic`**: a DesignPlan in, a sheet drawn by the
