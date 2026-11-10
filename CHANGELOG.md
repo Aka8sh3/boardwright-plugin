@@ -1,5 +1,61 @@
 # Changelog
 
+## 1.1.0rc8 (2026-11-09), from the buck-board live run
+
+The second full `/boardwright demo` run (TPS54202 buck + AP2112K LDO, 17
+parts, 4 of them built from datasheets) reached Gerbers with Altium's DRC
+at 0, and showed where the tools had reported success for work that did
+not happen. Engine 0.8.1 (`boardwright-engine`):
+
+- **`design_validate` tells the truth about ERC.** It read the Messages
+  panel, which carries no severity, filed "Nets containing floating input
+  pins" as info and answered `passed: true` beside a `proj_run_erc` that
+  listed it as an error. It now reads the ERC run's own list with Altium's
+  levels, and an ERC that could not run (a modal on screen) fails.
+- **No ERC markers count on the next ERC.** Altium's ERC ignores a marker
+  placed or deleted by script until the sheet is closed and opened again,
+  through saves and forced recompiles. `sch_place_no_erc` and the `obj_`
+  tools note the sheet, and the next `proj_run_erc`, `run_erc` or
+  `design_validate` saves, closes and reopens it first
+  (`reopened_sheets`). A save that reads as unwritten inside Altium's
+  2-second file-time tick is retried before the close.
+- **No board edit outlives its request.** A handler that left a PCB edit
+  open kept Altium's transaction open for good (each request zeroed the
+  count without closing it), and the next library save raised "A command
+  is currently active and save cannot be completed". The request loop now
+  closes any edit left open, and a board or library save unwinds an
+  abandoned one first.
+- **`lib_copy_footprint` into another library** opens it, copies, saves it
+  by path and reads the copy back; it is not a success unless the save
+  reached the file. Altium had loaded the closed library as a hidden copy
+  that no save reaches.
+- **`pcb_cleanup_tracks` and `pcb_gloss` are measured and run one at a
+  time.** With `expect_file` each compares missing connections, unreached
+  pads and clearances between routed copper before and after, and answers
+  `ok: false` with `made_worse` when it broke something. A routing lock
+  keeps two of them from editing one board at once. Live: a sliver pass
+  on the buck board broke 2 connections, and said so.
+- **`pcb_run_drc` repours first**, since a stale pour raises a modal
+  ("shelved or modified (but not repoured) polygons") and a wrong answer.
+- **Silkscreen against the board edge:** `pcb_layout_audit` has
+  `silk_audit` (overlay text, designators included, beyond the outline),
+  from each text's own box in Altium. The review render now draws
+  mirrored bottom text running left from its anchor: drawn the other way,
+  the run's on-board text looked off the board.
+- A plan may be given as the path of its `.json` file to every
+  `plan_json` argument (`design_validate_plan`, `sch_draw_template`,
+  ...); `pcb_place_components` takes `Top` / `Bottom` as layers.
+- Upkeep: engine 0.8.1 (0.8.0 was tagged), SECURITY.md, no console window
+  from the dev proxy, a test that slept now waits on its condition, and a
+  dev venv with the `[dev]` extra runs the whole engine suite (8,048
+  passed).
+
+Skill: one board edit at a time and tidy-ups measured
+(`references/layout.md`), the No ERC reopen and what `design_validate`
+now means (`erc-loop.md`), the silk gate (`outputs.md`), and working rules
+for Claude Code: load deferred tools first, read large results with Read
+or Grep, search only the project folder (`SKILL.md`, `tool-access.md`).
+
 ## 1.1.0rc7 (2026-11-09), from the first idea-to-Gerbers live run
 
 The first full `/boardwright demo` run (NMOS board: schematic with the

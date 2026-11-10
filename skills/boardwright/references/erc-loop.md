@@ -9,7 +9,12 @@ proj_get_erc_violations()      # structured list: description, detail, related_o
 ```
 
 `design_validate(project_path=...)` reports ERC, unconnected pins and
-atomic-part warnings together. It is the quickest pass/fail check.
+atomic-part warnings together. It is the quickest pass/fail check: its
+`passed` is false while the ERC lists any error-level violation, at the
+level Altium's ERC gave it. Before 1.1.0rc8 it read the Messages panel and
+filed errors as info, so a run reported "ERC 0 errors" with a floating
+input still listed: if `design_validate` and `proj_run_erc` ever disagree,
+`proj_run_erc`'s `level` is the truth.
 
 Confirm that the focused project is the right one (`proj_get_focused`)
 before you trust the result, since ERC runs on whatever project has focus.
@@ -35,8 +40,16 @@ layout only. A wire that looks joined in a PNG may not share a net.
 To place a NoERC marker you need the pin's location. Find it from the
 violation's `related_objects[].cross_probe`, or query it with
 `obj_query(object_type="eSchPin", ...)` (ask `tool_guide` for the exact
-filter). Then call `sch_place_no_erc(x, y)` with that location in mils.
-Never place a marker on a pin that the datasheet says must be connected.
+filter). Then call `sch_place_no_erc(x, y)` with that location in mils (several
+markers: one call with `items`). Never place a marker on a pin that the
+datasheet says must be connected.
+
+Altium's ERC does not see a scripted marker until its sheet is closed and
+opened again, through saves and forced recompiles. The marker tool notes
+the sheet, and the next `proj_run_erc`, `run_erc` or `design_validate`
+saves, closes and reopens it first (`reopened_sheets` in the reply). Do
+not reopen it yourself, and do not count a marker as failed before that
+next run.
 
 ## Bounds
 

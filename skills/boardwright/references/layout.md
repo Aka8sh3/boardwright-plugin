@@ -213,7 +213,16 @@ Follow [routing.md](routing.md):
    decide.
 4. A pad the router cannot reach is a **placement** problem at that pad.
    Fix the placement and do not re-run the router blindly.
-5. **Exit gate (measured):** `pcb_layout_audit` shows
+5. **Tidy-ups go one at a time, each measured.** `pcb_cleanup_tracks`
+   and `pcb_gloss` rewrite routed copper: call them one after the other,
+   never in the same turn, each with `expect_file` so the reply compares
+   missing connections, unreached pads and clearance violations before and
+   after. `ok: false` with `made_worse` means the edit broke routing: put
+   the routing back (`pcb_unroute`, then `pcb_autoroute_apply` the same
+   job again) rather than repairing it track by track. A sharp corner is
+   cheaper to fix with `obj_modify` on the two tracks than with a tidy-up
+   pass over the whole board.
+6. **Exit gate (measured):** `pcb_layout_audit` shows
    `connectivity_summary` routed == nets, `drc` violations == 0 and
    `corner_audit` sharper_than_45 == 0. Also `pcb_get_unrouted_nets`
    (reanalyze=True) shows none.
@@ -229,7 +238,11 @@ Follow [routing.md](routing.md):
    islands == 0, drc == 0, placement and routing numbers still pass, and
    return-via exceptions listed. `pcb_smart_drc` covers spacing of noisy
    and sensitive nets, which the board rules leave out.
-3. Silkscreen: `pcb_autoplace_silkscreen`. Keep the board name, revision,
+3. Silkscreen: `pcb_autoplace_silkscreen`. Bottom-overlay text is
+   mirrored and runs LEFT from its anchor. `pcb_layout_audit` with
+   `silk_audit` reads every overlay text's own box from Altium and lists
+   any beyond the board edge (`off_board` == 0 is the gate); Altium's DRC
+   does not check this. Keep the board name, revision,
    connector functions, pin-1 marks and polarity marks. On a dense board,
    move designators to the assembly layer (`pcb_copy_designators_to_mech`).
 4. **Altium's own DRC:** `pcb_run_drc()` runs Altium's batch check with

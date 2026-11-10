@@ -22,6 +22,21 @@ name (`app_ping`); call the tool that ends in it.
 The server picks the list from the client's name when it connects;
 Claude Code (CLI and VS Code extension) gets the full list.
 
+## Working rules in Claude Code
+
+- **Load a deferred tool before calling it.** A tool listed only by name
+  must be loaded with ToolSearch first (`select:` with the full prefixed
+  names, several at once). A call to a tool that is not loaded fails with
+  "No such tool available"; it is not a missing capability.
+- **A large result is saved to a file.** Read that file with the Read tool,
+  using `offset` and `limit`, or search it with Grep. Do not use a shell to
+  read it: the run's allowed tools may not include one.
+- **Search only the project folder.** Give Glob and Grep the project or
+  library folder as `path`. Never the user's home folder: it can hold
+  private folders a guard blocks, and the search is slow.
+- **One board edit at a time.** Two calls in one turn run at the same
+  time. Reads can go together; edits to one board or one library cannot.
+
 ## Minimal-mode routine
 
 1. Look up the argument names once per tool:

@@ -57,6 +57,11 @@ the mode ("just show me what it looks like") gets one question.
   names first with `tool_catalog(query="<tool>", with_schema=true)`.
   Never guess argument names. See
   [references/tool-access.md](references/tool-access.md).
+- **Either way:** load a deferred tool with ToolSearch before calling it;
+  read a large saved result with Read (`offset`, `limit`) or Grep, never a
+  shell; search only the project folder, never the home folder; and never
+  run two edits to one board or library in the same turn. Details in
+  tool-access.md, "Working rules".
 
 Coordinates are in **mils**. Paths are absolute Windows paths with
 backslashes. If no step covers what you need, ask

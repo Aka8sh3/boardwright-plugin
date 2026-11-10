@@ -5,6 +5,7 @@
 | Check | Source | Pass |
 |---|---|---|
 | Overlaps, pad gaps, keep-outs, holes, off-board | `pcb_layout_audit` placement_audit | all 0 |
+| Silkscreen text off the board | `pcb_layout_audit` silk_audit | off_board 0 |
 | Routed nets | connectivity_summary | routed == nets |
 | DRC (offline) | `pcb_layout_audit` drc | 0 |
 | DRC (Altium) | `pcb_run_drc()` (batch, no dialog; every mode, demo too), after the last board edit | 0 |
